@@ -38,6 +38,17 @@ class ProductsRepository {
     return categories.values.toList();
   }
 
+  List<Product> getProductsForCategory(String categoryName) {
+    List<Product> list = [];
+    for (int i=0; i<products.length; i++) {
+      if (products[i].category == categoryName) {
+        list.add(products[i]);
+      }
+    }
+
+    return list;
+  }
+
   bool removeItem(int productId) {
     Product? product;
     for (int i=0; i<products.length; i++) {
@@ -49,6 +60,7 @@ class ProductsRepository {
     }
 
     if (product == null) {
+      print("Can't delete item. Product not found");
       return false;
     }
 

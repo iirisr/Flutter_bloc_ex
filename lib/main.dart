@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:products_ex/bloc/blocProductState.dart';
+import 'package:products_ex/bloc/bloc_product_state.dart';
 
 import 'package:products_ex/repository/products_net.dart';
 import 'package:products_ex/repository/products_repository.dart';
 import 'package:products_ex/repository/products_source.dart';
-import 'bloc/blocLoadItemsBloc.dart';
-import 'products_app.dart';
+import 'bloc/product_bloc.dart';
+import 'ui/products_app.dart';
 
 void main() {
   ProductsSource product_source = ProductsNet();
@@ -25,16 +25,16 @@ class MyApp extends StatelessWidget {
     print("MyApp:build");
     return MultiBlocProvider(
         providers: [
-          BlocProvider<ProductLoadItemsBloc>(
+          BlocProvider<ProductBloc>(
             create: (context) =>
-                ProductLoadItemsBloc(productsRepository: productsRepository),
+                ProductBloc(productsRepository: productsRepository),
           ),
           /*BlocProvider<ProductItemRemovedBloc>(
-          create: (context) => ProductItemRemovedBloc(
-          productsRepository: productsRepository,
+            create: (context) =>
+                ProductItemRemovedBloc(productsRepository: productsRepository),
           ),*/
         ],
-        child: BlocBuilder<ProductLoadItemsBloc, ProductsState>(
+        child: BlocBuilder<ProductBloc, ProductsState>(
           builder: (context, state) {
             return MaterialApp(
             title: 'Flutter Demo',

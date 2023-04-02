@@ -42,14 +42,3 @@ class ProductsStateSuccess extends ProductsState {
   String toString() => 'ProductsStateSuccess { products: ${categories.length} }';
 }
 
-class ProductsStateItemRemoved extends ProductsState {
-  final List<Category> categories;
-
-  ProductsStateItemRemoved(this.categories);
-
-  @override
-  List<Object> get props => [];
-
-  @override
-  String toString() => 'ProductsStateItemRemoved { products: ${categories.length} }';
-}

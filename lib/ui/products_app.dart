@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:products_ex/bloc/blocLoadItemsBloc.dart';
 
+import 'package:products_ex/ui/category_card.dart';
+import 'package:products_ex/ui/products_screen.dart';
+import '../bloc/bloc_product_state.dart';
+import '../bloc/product_bloc.dart';
+import '../model/category.dart';
+import '../repository/products_repository.dart';
 
-import 'bloc/blocProductState.dart';
-import 'model/category.dart';
-import 'repository/products_repository.dart';
-import 'widgets/category_card.dart';
 
 
 class ProductsApp extends StatefulWidget {
@@ -20,19 +21,13 @@ class ProductsApp extends StatefulWidget {
 }
 
 class _ProductsAppState extends State<ProductsApp> {
-
-  late ProductLoadItemsBloc _productLoadItemsBloc;
+  late ProductBloc _productBloc;
 
   @override initState() {
     super.initState();
-    print("_ProductsAppState initState");
-    _productLoadItemsBloc = BlocProvider.of<ProductLoadItemsBloc>(context);
-    _productLoadItemsBloc.loadProducts();
-    /*ProductsNet().getProducts().then((value) { // From before the bloc
-      setState(() {
-        productsList = value;
-      });
-    });*/
+
+    _productBloc = BlocProvider.of<ProductBloc>(context);
+    _productBloc.loadProducts();
   }
 
   @override
@@ -40,30 +35,28 @@ class _ProductsAppState extends State<ProductsApp> {
     print("_ProductsAppState build");
     return Scaffold(
           appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
             title: Text(widget.title),
           ),
           body: SafeArea(
-              child: CreateProductsList(context)
+              child: CreateCategoriesList(context)
           ),
     );
   }
 
-  Widget CreateProductsList(BuildContext context) {
+  Widget CreateCategoriesList(BuildContext context) {
     List<Category> categories = widget.repository.getCategories();
 
     return BlocBuilder(
-        bloc: BlocProvider.of<ProductLoadItemsBloc>(context),
+        bloc: BlocProvider.of<ProductBloc>(context),
         builder: (BuildContext context, ProductsState state) {
           return
             (state is ProductsStateLoading)
             ? Center(
-              child: CircularProgressIndicator(color: Colors.indigo,)
+                child: CircularProgressIndicator(color: Colors.indigo,)
               )
             : (state is ProductsStateEmpty)
               ? Center(
-                  child: Text('There are no products', style: TextStyle(fontSize: 18)),
+                  child: Text('There are no categories', style: TextStyle(fontSize: 18)),
                 )
               : (state is ProductsStateSuccess)
                  ? Center(
@@ -72,10 +65,21 @@ class _ProductsAppState extends State<ProductsApp> {
                         : ListView.builder(
                             itemCount: categories.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return getCategoryCard(context, categories[index].name,
-                                  categories[index].thumbnail,
-                                  categories[index].sumOfItemsInCategory,
-                                  categories[index].sumOfItemsInInventory);
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder:
+                                        (context) => ProductsScreen(
+                                          repository: widget.repository,
+                                          categoryName: categories[index].name,)),
+                                  );
+                                },
+                                child: getCategoryCard(context, categories[index].name,
+                                    categories[index].thumbnail,
+                                    categories[index].sumOfItemsInCategory,
+                                    categories[index].sumOfItemsInInventory),
+                              );
                             },
                           ),
                   )
