@@ -9,12 +9,12 @@ class ConvertProductItemToProduct {
     return Product(
         id: productItem.id,
         title: productItem.title,
-        description: productItem.description,
+        //description: productItem.description,
         price: productItem.price,
         discountPercentage: productItem.discountPercentage,
         rating: productItem.rating,
         stock: productItem.stock,
-        brand: productItem.brand,
+        //brand: productItem.brand,
         category: productItem.category,
         thumbnail: productItem.thumbnail,
         images: productItem.images

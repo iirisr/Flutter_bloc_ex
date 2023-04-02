@@ -29,10 +29,6 @@ class MyApp extends StatelessWidget {
             create: (context) =>
                 ProductBloc(productsRepository: productsRepository),
           ),
-          /*BlocProvider<ProductItemRemovedBloc>(
-            create: (context) =>
-                ProductItemRemovedBloc(productsRepository: productsRepository),
-          ),*/
         ],
         child: BlocBuilder<ProductBloc, ProductsState>(
           builder: (context, state) {
