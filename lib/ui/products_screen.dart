@@ -21,11 +21,16 @@ class _ProductsScreenState extends State<ProductsScreen> {
   late ProductBloc _productBloc;
   late List<Product> _products ;
 
+  List<String> _sortItems = ['price', 'rating', '% discount'];
+  late String dropdownValue;
+
   @override
   void initState() {
     super.initState();
     _productBloc = BlocProvider.of<ProductBloc>(context);
     _products = widget.repository.getProductsForCategory(widget.categoryName);
+    sortProducts(_sortItems[0]);
+    dropdownValue = _sortItems[0];
     for (int i=0; i<_products.length; i++) {
       print(_products[i].title);
     }
@@ -36,6 +41,35 @@ class _ProductsScreenState extends State<ProductsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.categoryName),
+        actions: <Widget>[
+         Center(
+           child: DropdownButton<String>(
+              items: _sortItems.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Center(child: Text(value, style: TextStyle(color: Colors.white))),
+                );
+              }).toList(),
+              value: dropdownValue,
+              alignment: AlignmentDirectional.centerStart,
+              dropdownColor: Colors.indigo[800],
+              borderRadius: BorderRadius.circular(8),
+              icon: const Icon(Icons.arrow_downward, color: Colors.white),
+              elevation: 16,
+              style: const TextStyle(color: Colors.white),
+              underline: Container(
+                height: 0,
+                color: Colors.white
+              ),
+              onChanged: (String? value) {
+                setState(() {
+                  dropdownValue = value!;
+                  sortProducts(dropdownValue);
+                });
+              },
+            ),
+         )
+        ],
       ),
       body: Container(
         color: Color(0xFFEFDCCC),
@@ -48,7 +82,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
     return BlocBuilder(
         bloc: BlocProvider.of<ProductBloc>(context),
         builder: (BuildContext context, ProductsState state) {
-          //_products = widget.repository.getProductsForCategory(widget.categoryName);
           return
             (state is ProductsStateLoading)
             ? Center(
@@ -57,7 +90,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             : (state is ProductsStateSuccess)
                 ? products == null || products.isEmpty
                   ? Center(
-                      child: Text('There are no products', style: TextStyle(fontSize: 18)),
+                      child: Text('No items', style: TextStyle(fontSize: 18)),
                     )
                   : ListView.builder(
                     scrollDirection: Axis.vertical,
@@ -109,6 +142,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ]
       ),
     );
+  }
+
+  void sortProducts(String dropdownValue) {
+    if (dropdownValue == _sortItems[0]) { // price
+      _products.sort((a, b) => a.price.compareTo(b.price));
+    }
+    else if (dropdownValue == _sortItems[1]) { // rating
+      _products.sort((a, b) => a.rating.compareTo(b.rating));
+    }
+    else if (dropdownValue == _sortItems[2]) { // % discount
+      _products.sort((a, b) => a.discountPercentage.compareTo(b.discountPercentage));
+    }
   }
 }
 

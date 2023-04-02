@@ -33,6 +33,7 @@ dependencies:
   cached_network_image: ^3.2.3
   flutter_bloc: ^8.1.2
   equatable: ^2.0.5
+  flip_card: ^0.7.0
   flutter:
     sdk: flutter
 
