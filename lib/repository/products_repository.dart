@@ -4,45 +4,49 @@ import 'package:products_ex/repository/products_source.dart';
 
 
 class ProductsRepository {
-  final ProductsSource productsSource;
+  final ProductsSource _productsSource;
 
-  late List<Product> products = [];
-  late Map<String,Category> categories = {};
+  late List<Product> _products = [];
+  late Map<String,Category> _categories = {};
 
-  ProductsRepository(this.productsSource);
+  ProductsRepository(this._productsSource);
 
   List<Category> getCategories() {
-    return categories.values.toList();
+    return _categories.values.toList();
+  }
+
+  List<Product> getProducts() {
+    return _products;
   }
 
   Future<List<Category>> loadCategories() async {
-    products = await productsSource.getProducts();
+    _products = await _productsSource.getProducts();
 
-    for (int i=0; i<products.length; i++) {
-      if (categories[products[i].category] == null) {
-        categories[products[i].category] = Category(
-            name: products[i].category,
+    for (int i=0; i<_products.length; i++) {
+      if (_categories[_products[i].category] == null) {
+        _categories[_products[i].category] = Category(
+            name: _products[i].category,
             sumOfItemsInCategory: 1,
             sumOfItemsInInventory: 1,
-            thumbnail: products[i].images.length != 0 ? products[i].images[0] : null
+            thumbnail: _products[i].images.length != 0 ? _products[i].images[0] : null
         );
       }
       else {
-        categories[products[i].category]!.setNumberOfItemsInCategory(
-            categories[products[i].category]!.sumOfItemsInCategory+1);
-        categories[products[i].category]!.setNumberOfItemsInInventory(
-            categories[products[i].category]!.sumOfItemsInInventory+products[i].stock);
+        _categories[_products[i].category]!.setNumberOfItemsInCategory(
+            _categories[_products[i].category]!.sumOfItemsInCategory+1);
+        _categories[_products[i].category]!.setNumberOfItemsInInventory(
+            _categories[_products[i].category]!.sumOfItemsInInventory+_products[i].stock);
       }
     }
 
-    return categories.values.toList();
+    return _categories.values.toList();
   }
 
   List<Product> getProductsForCategory(String categoryName) {
     List<Product> list = [];
-    for (int i=0; i<products.length; i++) {
-      if (products[i].category == categoryName) {
-        list.add(products[i]);
+    for (int i=0; i<_products.length; i++) {
+      if (_products[i].category == categoryName) {
+        list.add(_products[i]);
       }
     }
 
@@ -51,10 +55,10 @@ class ProductsRepository {
 
   bool removeItem(int productId) {
     Product? product;
-    for (int i=0; i<products.length; i++) {
-      if (products[i].id == productId) {
-        product = products[i];
-        products.removeAt(i);
+    for (int i=0; i<_products.length; i++) {
+      if (_products[i].id == productId) {
+        product = _products[i];
+        _products.removeAt(i);
         break;
       }
     }
@@ -64,10 +68,10 @@ class ProductsRepository {
       return false;
     }
 
-    categories[product.category]?.sumOfItemsInCategory -= 1;
-    categories[product.category]?.sumOfItemsInInventory -= product.stock;
-    if (categories[product.category]?.sumOfItemsInCategory == 0) {
-      categories.remove(product.category);
+    _categories[product.category]?.sumOfItemsInCategory -= 1;
+    _categories[product.category]?.sumOfItemsInInventory -= product.stock;
+    if (_categories[product.category]?.sumOfItemsInCategory == 0) {
+      _categories.remove(product.category);
     }
 
     return true;

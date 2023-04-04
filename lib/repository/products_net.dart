@@ -25,16 +25,6 @@ class ProductsNet extends ProductsSource {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       ProductResult list = ProductResult.fromJson(results);
       return ConvertProductItemToProduct().listToDomainModel(list.productResultsItems);
-      //return list.map((productResult) => ConvertProductItemToProduct(productResult) );
-      //return ConvertProductItemToProduct().toDomainModel(list);
-     /* return ProductResult.fromJson(results)
-          .productResultsItems
-          //.productItems
-          //.productResultItems
-          .map(
-            (productResult) => ConvertProductItemToProduct().toDomainModel(productResult.),
-      )
-          .toList();*/
     } else {
         throw 'Failed to read Json';
     }
